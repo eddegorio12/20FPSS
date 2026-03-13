@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edwin Jr. D. Degorio | Portfolio</title>
+    <meta name="description" content="Portfolio of Edwin Jr. D. Degorio, SOC Analyst Candidate & Network Security Engineer">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --surface-color: rgba(33, 38, 45, 0.65);
+            --text-primary: #e6edf3;
+            --text-secondary: #7d8590;
+            --accent-color: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.4);
+            --border-color: rgba(240, 246, 252, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(88, 166, 255, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(88, 166, 255, 0.05), transparent 25%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Glassmorphism card utility */
+        .glass-card {
+            background: var(--surface-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), 0 0 12px var(--accent-glow);
+            border-color: rgba(88, 166, 255, 0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffffff, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .contact-info span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2::after {
+            content: "";
+            height: 2px;
+            flex-grow: 1;
+            background: linear-gradient(90deg, var(--accent-color), transparent);
+            opacity: 0.3;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        /* Skills section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .skill-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .skill-item:hover {
+            background: rgba(88, 166, 255, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .skill-item::before {
+            content: "▹";
+            color: var(--accent-color);
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        /* Experience section */
+        .experience-item {
+            position: relative;
+            padding-left: 24px;
+            border-left: 2px solid var(--border-color);
+            margin-bottom: 32px;
+        }
+
+        .experience-item::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .experience-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .job-company {
+            font-size: 1.05rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .job-date {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .job-details {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        .job-details li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .job-details li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        /* Education & Certifications */
+        .flex-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .flex-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .flex-item:hover {
+            border-color: rgba(88, 166, 255, 0.3);
+            background: rgba(88, 166, 255, 0.05);
+        }
+
+        .item-main {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .item-sub {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--accent-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(88, 166, 255, 0.2);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animation delays for sections */
+        .sect-1 { animation-delay: 0.2s; }
+        .sect-2 { animation-delay: 0.4s; }
+        .sect-3 { animation-delay: 0.6s; }
+        .sect-4 { animation-delay: 0.8s; }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            .job-header {
+                flex-direction: column;
+            }
+            .flex-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>EDWIN JR. D. DEGORIO</h1>
+        <div class="subtitle">SOC Analyst (Level 1) Candidate | Network Security Engineer</div>
+        <div class="contact-info">
+            <span>📍 Cebu City, Philippines</span>
+            <span>✉️ eddegorio12@gmail.com</span>
+            <span>📱 +63 961 480 6906</span>
+        </div>
+    </header>
+
+    <section class="glass-card animate-on-scroll sect-1">
+        <h2>Professional Summary</h2>
+        <p>
+            Network security engineer with 2 years of experience supporting Fortinet FortiGate environments. Hands-on in firewall policy changes, log review, traffic validation, and incident troubleshooting using FortiGate GUI and CLI. Experienced working through Ivanti tickets with clear documentation and timely escalation. Targeting a SOC Level 1 role.
+        </p>
+    </section>
+
+    <section class="glass-card animate-on-scroll sect-2">
+        <h2>Core Skills</h2>
+        <div class="skills-grid">
+            <div class="skill-item">FortiGate firewall policy administration (objects, services, schedules)</div>
+            <div class="skill-item">NAT troubleshooting (SNAT/DNAT), VIP concepts</div>
+            <div class="skill-item">IPsec site-to-site VPN support and validation</div>
+            <div class="skill-item">FortiGate CLI troubleshooting (routing, sessions, interfaces, VPN status)</div>
+            <div class="skill-item">Log review and traffic validation (allow/deny, policy hit, NAT impact)</div>
+            <div class="skill-item">Incident triage support, evidence gathering, and escalation</div>
+            <div class="skill-item">Change implementation and post-change validation</div>
+            <div class="skill-item">Ivanti ticketing workflow and SLA handling</div>
+        </div>
+    </section>
+
+    <section class="glass-card animate-on-scroll sect-3">
+        <h2>Professional Experience</h2>
+        
+        <div class="experience-item">
+            <div class="job-header">
+                <div>
+                    <div class="job-title">Network Security Engineer (FortiGate Implementation & Support)</div>
+                    <div class="job-company">Trends and Technologies, Inc. | Cebu City, Philippines</div>
+                </div>
+                <div class="job-date">Nov 2023 – Present</div>
+            </div>
+            <ul class="job-details">
+                <li>Implemented and supported FortiGate firewall policies for customer environments, handling access requests and change tasks.</li>
+                <li>Troubleshot connectivity and security issues by reviewing logs and validating traffic flow (policy match, NAT behavior, routing path, interface status).</li>
+                <li>Used FortiGate CLI diagnostics to isolate root cause and provide escalation-ready evidence (timestamps, source/destination, ports, policy results).</li>
+                <li>Supported IPsec site-to-site VPN issues by validating tunnel status and identifying dependencies across routing and firewall policies.</li>
+                <li>Managed incidents and service requests in Ivanti, keeping tickets updated with actions taken and clear closure notes aligned with SLAs.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="glass-card animate-on-scroll sect-4">
+        <h2>Education & Background</h2>
+        
+        <div class="flex-list" style="margin-bottom: 24px;">
+            <div class="flex-item">
+                <div>
+                    <div class="item-main">Bachelor of Science in Computer Engineering</div>
+                    <div class="item-sub">University of Cebu – Banilad Campus</div>
+                </div>
+                <div class="item-sub">July 2023</div>
+            </div>
+        </div>
+
+        <h3 style="color: var(--text-primary); margin-bottom: 12px; font-size: 1.1rem;">Certifications</h3>
+        <div class="tags" style="margin-bottom: 24px;">
+            <span class="tag">CompTIA Security+</span>
+            <span class="tag">Fortinet Certified Fundamentals (FCF)</span>
+            <span class="tag">Fortinet Certified Associate (FCA)</span>
+            <span class="tag">Black Belt Fire Jumper – FE Security Essentials</span>
+        </div>
+
+        <h3 style="color: var(--text-primary); margin-bottom: 12px; font-size: 1.1rem;">Languages</h3>
+        <div class="tags">
+            <span class="tag">English</span>
+            <span class="tag">Filipino</span>
+            <span class="tag">Cebuano</span>
+        </div>
+    </section>
+</div>
+
+</body>
+</html>
