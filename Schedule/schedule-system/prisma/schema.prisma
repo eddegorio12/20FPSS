@@ -7,22 +7,20 @@ datasource db {
   provider = "postgresql"
 }
 
-// NextAuth Required Models
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -35,29 +33,23 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Role {
-  ADMIN
-  TEACHER
-}
-
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(TEACHER)
-  accounts      Account[]
-  sessions      Session[]
-  
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  role           Role            @default(TEACHER)
+  accounts       Account[]
+  sessions       Session[]
   teacherProfile TeacherProfile?
 }
 
 model TeacherProfile {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String     @id @default(cuid())
+  userId    String     @unique
   schedules Schedule[]
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Section {
@@ -69,65 +61,63 @@ model Section {
 model Topic {
   id         String      @id @default(cuid())
   name       String
-  topicParts TopicPart[]
   schedules  Schedule[]
+  topicParts TopicPart[]
 }
 
 model TopicPart {
   id        String     @id @default(cuid())
   name      String
   topicId   String
-  topic     Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
   schedules Schedule[]
+  topic     Topic      @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model Schedule {
+  id            String            @id @default(cuid())
+  date          DateTime          @db.Date
+  startTime     DateTime          @db.Time(6)
+  endTime       DateTime          @db.Time(6)
+  roomNumber    String?
+  notes         String?
+  sectionId     String
+  topicId       String
+  topicPartId   String?
+  teacherId     String
+  googleEventId String?           @unique
+  syncStatus    SyncStatus        @default(PENDING)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  syncLogs      CalendarSyncLog[]
+  section       Section           @relation(fields: [sectionId], references: [id])
+  teacher       TeacherProfile    @relation(fields: [teacherId], references: [id])
+  topic         Topic             @relation(fields: [topicId], references: [id])
+  topicPart     TopicPart?        @relation(fields: [topicPartId], references: [id])
+}
+
+model ReminderSetting {
+  id      String @id @default(cuid())
+  minutes Int
+  method  String
+}
+
+model CalendarSyncLog {
+  id          String   @id @default(cuid())
+  scheduleId  String
+  action      String
+  status      String
+  errorDetail String?
+  createdAt   DateTime @default(now())
+  schedule    Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  ADMIN
+  TEACHER
 }
 
 enum SyncStatus {
   PENDING
   SYNCED
   FAILED
-}
-
-model Schedule {
-  id                  String    @id @default(cuid())
-  date                DateTime  @db.Date
-  startTime           DateTime  @db.Time
-  endTime             DateTime  @db.Time
-  roomNumber          String?
-  notes               String?   @db.Text
-  
-  // Relations
-  sectionId           String
-  section             Section   @relation(fields: [sectionId], references: [id])
-  topicId             String
-  topic               Topic     @relation(fields: [topicId], references: [id])
-  topicPartId         String?
-  topicPart           TopicPart? @relation(fields: [topicPartId], references: [id])
-  teacherId           String
-  teacher             TeacherProfile @relation(fields: [teacherId], references: [id])
-
-  // Google Calendar Sync
-  googleEventId       String?   @unique
-  syncStatus          SyncStatus @default(PENDING)
-  
-  // Timestamps
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-
-  syncLogs            CalendarSyncLog[]
-}
-
-model ReminderSetting {
-  id        String @id @default(cuid())
-  minutes   Int    // e.g., 15 minutes before
-  method    String // email, popup
-}
-
-model CalendarSyncLog {
-  id          String   @id @default(cuid())
-  scheduleId  String
-  schedule    Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
-  action      String   // CREATE, UPDATE, DELETE
-  status      String   // SUCCESS, FAILED
-  errorDetail String?  @db.Text
-  createdAt   DateTime @default(now())
 }

@@ -32,7 +32,7 @@ export class CalendarSyncService {
     return oauth2Client;
   }
 
-  private static buildEventPayload(schedule: FullSchedule) {
+  private static buildEventPayload(schedule: FullSchedule, includeTeacherAsAttendee: boolean = false) {
     const summary = `Class: ${schedule.topic.name}${schedule.topicPart ? ' - ' + schedule.topicPart.name : ''} (${schedule.section.name})`;
     const description = `Teacher: ${schedule.teacher.user.name}\nSection: ${schedule.section.name}\nNotes: ${schedule.notes || 'None'}`;
     
@@ -40,20 +40,29 @@ export class CalendarSyncService {
     const startDateTime = schedule.startTime.toISOString();
     const endDateTime = schedule.endTime.toISOString();
 
-    return {
+    const payload: any = {
       summary,
       description,
       location: schedule.roomNumber || undefined,
-      start: { dateTime: startDateTime, timeZone: 'UTC' }, // Note: Adjust timezone if required
-      end: { dateTime: endDateTime, timeZone: 'UTC' },
+      start: { dateTime: startDateTime, timeZone: 'Asia/Manila' }, 
+      end: { dateTime: endDateTime, timeZone: 'Asia/Manila' },
     };
+
+    if (includeTeacherAsAttendee && schedule.teacher.user.email) {
+      payload.attendees = [{ email: schedule.teacher.user.email }];
+    }
+
+    return payload;
   }
 
-  static async syncCreate(schedule: FullSchedule) {
+  static async syncCreate(schedule: FullSchedule, adminUserId?: string) {
     try {
-      const oauth2Client = await this.getOAuth2Client(schedule.teacher.userId);
+      const userIdToAuth = adminUserId || schedule.teacher.userId;
+      const oauth2Client = await this.getOAuth2Client(userIdToAuth);
       const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-      const eventPayload = this.buildEventPayload(schedule);
+      
+      const isSchedulerDiffFromTeacher = Boolean(adminUserId && adminUserId !== schedule.teacher.userId);
+      const eventPayload = this.buildEventPayload(schedule, isSchedulerDiffFromTeacher);
 
       const response = await calendar.events.insert({
         calendarId: 'primary',
@@ -101,16 +110,19 @@ export class CalendarSyncService {
     }
   }
 
-  static async syncUpdate(schedule: FullSchedule) {
+  static async syncUpdate(schedule: FullSchedule, adminUserId?: string) {
     if (!schedule.googleEventId) {
       // Fallback to create if missing
-      return this.syncCreate(schedule);
+      return this.syncCreate(schedule, adminUserId);
     }
 
     try {
-      const oauth2Client = await this.getOAuth2Client(schedule.teacher.userId);
+      const userIdToAuth = adminUserId || schedule.teacher.userId;
+      const oauth2Client = await this.getOAuth2Client(userIdToAuth);
       const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-      const eventPayload = this.buildEventPayload(schedule);
+      
+      const isSchedulerDiffFromTeacher = Boolean(adminUserId && adminUserId !== schedule.teacher.userId);
+      const eventPayload = this.buildEventPayload(schedule, isSchedulerDiffFromTeacher);
 
       await calendar.events.patch({
         calendarId: 'primary',
@@ -152,13 +164,14 @@ export class CalendarSyncService {
     }
   }
 
-  static async syncDelete(schedule: FullSchedule) {
+  static async syncDelete(schedule: FullSchedule, adminUserId?: string) {
     if (!schedule.googleEventId) {
       return { success: true }; // Nothing to delete
     }
 
     try {
-      const oauth2Client = await this.getOAuth2Client(schedule.teacher.userId);
+      const userIdToAuth = adminUserId || schedule.teacher.userId;
+      const oauth2Client = await this.getOAuth2Client(userIdToAuth);
       const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
 
       await calendar.events.delete({

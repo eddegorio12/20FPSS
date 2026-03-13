@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { PrismaClient, Role } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from '../src/lib/prisma';
+import { Role } from '@prisma/client';
 
 async function main() {
   // Clear existing (optional)

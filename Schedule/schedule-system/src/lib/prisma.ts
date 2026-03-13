@@ -11,10 +11,9 @@ const globalForPrisma = global as unknown as {
 if (!globalForPrisma.pgPool) {
   globalForPrisma.pgPool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    max: 10,
-    idleTimeoutMillis: 30000,
-    // Increase connection timeout to 60s because local Prisma dev proxy is slow on cold start
-    connectionTimeoutMillis: 60000,
+    max: 5,                    // Must match connection_limit in DATABASE_URL
+    idleTimeoutMillis: 10000,  // Release idle connections faster
+    connectionTimeoutMillis: 60000, // 60s to handle slow cold starts
   })
 }
 

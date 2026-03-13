@@ -6,7 +6,6 @@ export default async function HomePage() {
   const session = await auth();
 
   if (session?.user) {
-    // @ts-ignore
     if (session.user.role === 'ADMIN') {
       redirect('/admin');
     } else {

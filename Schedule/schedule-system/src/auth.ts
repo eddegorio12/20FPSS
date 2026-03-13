@@ -26,7 +26,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, user }) {
       if (session?.user && user) {
         session.user.id = user.id
-        // @ts-ignore
         session.user.role = (user as any).role ?? 'TEACHER'
       }
       return session

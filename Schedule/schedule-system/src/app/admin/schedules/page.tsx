@@ -1,17 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'next';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function AdminSchedulesPage() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState('');
+
   useEffect(() => {
     fetch('/api/schedules')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch');
+        return res.json();
+      })
       .then(data => {
         setSchedules(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError('Could not load schedules. Please refresh.');
         setLoading(false);
       });
   }, []);
@@ -20,9 +29,9 @@ export default function AdminSchedulesPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Manage Schedules</h1>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+        <Link href="/admin/schedules/new" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
           + New Schedule
-        </button>
+        </Link>
       </div>
 
       <div className="bg-white shadow-sm rounded-lg overflow-hidden border">
@@ -39,7 +48,9 @@ export default function AdminSchedulesPage() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {loading ? (
+            {error ? (
+              <tr><td colSpan={7} className="text-center py-4 text-red-600">{error}</td></tr>
+            ) : loading ? (
               <tr><td colSpan={7} className="text-center py-4">Loading...</td></tr>
             ) : schedules.map((s: any) => (
               <tr key={s.id}>
