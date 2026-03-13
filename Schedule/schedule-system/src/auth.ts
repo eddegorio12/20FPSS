@@ -19,16 +19,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
     }),
   ],
+  session: {
+    strategy: "database",
+  },
   callbacks: {
     async session({ session, user }) {
-      if (session?.user) {
+      if (session?.user && user) {
         session.user.id = user.id
-        // Add role to the session
-        // Assuming we update the NextAuth User type declaration separately
         // @ts-ignore
-        session.user.role = user.role
+        session.user.role = (user as any).role ?? 'TEACHER'
       }
       return session
     }
+  },
+  pages: {
+    signIn: '/',
+    error: '/',
   }
 })
