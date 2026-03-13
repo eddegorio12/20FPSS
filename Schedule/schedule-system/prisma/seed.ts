@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { PrismaClient, Role } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -71,7 +72,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error("SEED_ERROR:", e.message);
     process.exit(1);
   })
   .finally(async () => {
