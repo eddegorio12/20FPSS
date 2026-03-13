@@ -3,14 +3,12 @@ import Link from 'next/link';
 import { Calendar, Users, FolderTree, AlertCircle } from 'lucide-react';
 
 export default async function AdminDashboardPage() {
-  const [scheduleCount, teacherCount, sectionCount, recentErrors] = await Promise.all([
-    prisma.schedule.count(),
-    prisma.teacherProfile.count(),
-    prisma.section.count(),
-    prisma.calendarSyncLog.count({
-      where: { status: 'FAILED' },
-    }),
-  ]);
+  const scheduleCount = await prisma.schedule.count();
+  const teacherCount = await prisma.teacherProfile.count();
+  const sectionCount = await prisma.section.count();
+  const recentErrors = await prisma.calendarSyncLog.count({
+    where: { status: 'FAILED' },
+  });
 
   return (
     <div className="space-y-6">
