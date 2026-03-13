@@ -16,6 +16,15 @@ const scheduleSchema = z.object({
   teacherEmail: z.string().email("Valid Teacher Email is required"),
 });
 
+// Reusable clean include statement prevents data leakage of sensitive user fields
+export const authUserSelect = { id: true, name: true, email: true, image: true, role: true };
+export const schedulePopulate = {
+  topic: true,
+  topicPart: true,
+  section: true,
+  teacher: { include: { user: { select: authUserSelect } } },
+};
+
 export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user) return new NextResponse('Unauthorized', { status: 401 });
@@ -47,12 +56,7 @@ export async function GET(req: Request) {
 
   const schedules = await prisma.schedule.findMany({
     where,
-    include: {
-      topic: true,
-      topicPart: true,
-      section: true,
-      teacher: { include: { user: true } },
-    },
+    include: schedulePopulate,
     orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
   });
 
@@ -122,12 +126,7 @@ export async function POST(req: Request) {
         topicPartId: topicPart?.id,
         teacherId: teacher.id,
       },
-      include: {
-        topic: true,
-        topicPart: true,
-        section: true,
-        teacher: { include: { user: true } },
-      },
+      include: schedulePopulate,
     });
 
     // Trigger Google Calendar sync asynchronously USING ADMIN TOKEN
@@ -136,9 +135,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json(schedule);
   } catch (error: any) {
-    if (error && (error as any).name === 'ZodError') {
-      return new NextResponse(JSON.stringify((error as any).errors), { status: 400 });
+    if (error?.name === 'ZodError') {
+      return new NextResponse(JSON.stringify(error.errors), { status: 400 });
     }
-    return new NextResponse((error as Error).message, { status: 500 });
+    console.error("[POST_SCHEDULE_ERROR]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

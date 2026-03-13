@@ -20,13 +20,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "jwt",  // JWT = no DB lookup on every page load
   },
   callbacks: {
-    async session({ session, user }) {
-      if (session?.user && user) {
-        session.user.id = user.id
-        session.user.role = (user as any).role ?? 'TEACHER'
+    async jwt({ token, user }) {
+      // On first sign-in, user is available — save role into the JWT
+      if (user) {
+        token.id = user.id
+        token.role = (user as any).role ?? 'TEACHER'
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session?.user && token) {
+        session.user.id = token.id as string
+        session.user.role = token.role as string
       }
       return session
     }
