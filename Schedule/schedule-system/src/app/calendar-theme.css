@@ -1,0 +1,425 @@
+/* ============================================================
+   Google Calendar Theme for FullCalendar
+   ============================================================ */
+
+/* ---------- Root Variables ---------- */
+.gc-calendar {
+  --gc-border: #dadce0;
+  --gc-text: #3c4043;
+  --gc-text-secondary: #70757a;
+  --gc-today-bg: #1a73e8;
+  --gc-today-bg-light: #e8f0fe;
+  --gc-hover: #f1f3f4;
+  --gc-time-indicator: #ea4335;
+  --gc-surface: #ffffff;
+  --gc-event-radius: 4px;
+  font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ---------- Overall Container ---------- */
+.gc-calendar .fc {
+  --fc-border-color: var(--gc-border);
+  --fc-today-bg-color: var(--gc-today-bg-light);
+  --fc-neutral-bg-color: var(--gc-surface);
+  --fc-page-bg-color: var(--gc-surface);
+  --fc-now-indicator-color: var(--gc-time-indicator);
+  background: var(--gc-surface);
+}
+
+/* ---------- Header / Toolbar ---------- */
+.gc-calendar .fc .fc-toolbar {
+  margin-bottom: 0 !important;
+  padding: 8px 8px 8px 16px;
+  border-bottom: 1px solid var(--gc-border);
+  background: var(--gc-surface);
+}
+
+.gc-calendar .fc .fc-toolbar-title {
+  font-size: 1.375rem;
+  font-weight: 400;
+  color: var(--gc-text);
+  letter-spacing: 0;
+}
+
+/* Navigation buttons (prev/next/today) */
+.gc-calendar .fc .fc-button {
+  background: var(--gc-surface) !important;
+  border: 1px solid var(--gc-border) !important;
+  color: var(--gc-text) !important;
+  box-shadow: none !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 4px;
+  text-transform: none;
+  transition: background-color 0.1s, box-shadow 0.1s;
+}
+
+.gc-calendar .fc .fc-button:hover {
+  background: var(--gc-hover) !important;
+  box-shadow: 0 1px 3px rgba(60, 64, 67, 0.15) !important;
+}
+
+.gc-calendar .fc .fc-button:focus {
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.3) !important;
+}
+
+.gc-calendar .fc .fc-button-active {
+  background: var(--gc-today-bg-light) !important;
+  color: var(--gc-today-bg) !important;
+  border-color: var(--gc-today-bg-light) !important;
+  font-weight: 600;
+}
+
+/* Prev/Next icon buttons */
+.gc-calendar .fc .fc-prev-button,
+.gc-calendar .fc .fc-next-button {
+  padding: 4px 8px;
+  border-radius: 50% !important;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none !important;
+}
+
+.gc-calendar .fc .fc-today-button {
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.gc-calendar .fc .fc-today-button:disabled {
+  opacity: 0.6;
+}
+
+/* Button group (Day/Week/Month) */
+.gc-calendar .fc .fc-button-group {
+  border: 1px solid var(--gc-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gc-calendar .fc .fc-button-group .fc-button {
+  border: none !important;
+  border-radius: 0 !important;
+  border-right: 1px solid var(--gc-border) !important;
+}
+
+.gc-calendar .fc .fc-button-group .fc-button:last-child {
+  border-right: none !important;
+}
+
+/* ---------- Day Headers ---------- */
+.gc-calendar .fc .fc-col-header-cell {
+  background: var(--gc-surface);
+  border-bottom: 1px solid var(--gc-border);
+  padding: 8px 0;
+}
+
+.gc-calendar .fc .fc-col-header-cell-cushion {
+  color: var(--gc-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 4px;
+  text-decoration: none !important;
+}
+
+/* Today's column header */
+.gc-calendar .fc .fc-day-today .fc-col-header-cell-cushion {
+  color: var(--gc-today-bg);
+}
+
+/* ---------- Time Axis ---------- */
+.gc-calendar .fc .fc-timegrid-slot-label {
+  font-size: 0.625rem;
+  color: var(--gc-text-secondary);
+  font-weight: 400;
+  vertical-align: top;
+  padding-top: 2px;
+}
+
+.gc-calendar .fc .fc-timegrid-slot {
+  height: 48px;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.gc-calendar .fc .fc-timegrid-slot-minor {
+  border-bottom: 1px solid #f8f9fa;
+}
+
+/* ---------- Day Grid (Month View) ---------- */
+.gc-calendar .fc .fc-daygrid-day-number {
+  color: var(--gc-text);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  text-decoration: none !important;
+}
+
+.gc-calendar .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+  background: var(--gc-today-bg);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 4px;
+}
+
+/* ---------- Current Time Indicator ---------- */
+.gc-calendar .fc .fc-timegrid-now-indicator-line {
+  border-color: var(--gc-time-indicator);
+  border-width: 2px;
+}
+
+.gc-calendar .fc .fc-timegrid-now-indicator-arrow {
+  border-color: var(--gc-time-indicator);
+  border-width: 5px;
+}
+
+/* ---------- Events ---------- */
+.gc-calendar .fc .fc-timegrid-event,
+.gc-calendar .fc .fc-daygrid-event {
+  border-radius: var(--gc-event-radius) !important;
+  border: none !important;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.15);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+  overflow: hidden;
+}
+
+.gc-calendar .fc .fc-timegrid-event:hover,
+.gc-calendar .fc .fc-daygrid-event:hover {
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.3);
+}
+
+.gc-calendar .fc .fc-event-main {
+  padding: 2px 4px;
+}
+
+/* ---------- No Event Borders ---------- */
+.gc-calendar .fc .fc-timegrid-event .fc-event-main-frame {
+  overflow: hidden;
+}
+
+/* ---------- Scrollbar ---------- */
+.gc-calendar .fc .fc-scroller::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gc-calendar .fc .fc-scroller::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 4px;
+}
+
+.gc-calendar .fc .fc-scroller::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Hoverable time slots ---------- */
+.gc-calendar .fc .fc-timegrid-col:hover {
+  background: rgba(241, 243, 244, 0.3);
+}
+
+/* ---------- All-day section ---------- */
+.gc-calendar .fc .fc-daygrid-body {
+  border-bottom: 1px solid var(--gc-border);
+}
+
+/* ---------- Loading Animation ---------- */
+.gc-calendar-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  color: var(--gc-text-secondary, #70757a);
+}
+
+.gc-calendar-loading .gc-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #dadce0;
+  border-top-color: #1a73e8;
+  border-radius: 50%;
+  animation: gc-spin 0.8s linear infinite;
+}
+
+@keyframes gc-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Event Popover ---------- */
+.gc-popover-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.gc-popover {
+  position: fixed;
+  z-index: 1000;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 8px 28px rgba(60, 64, 67, 0.28);
+  width: 320px;
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  animation: gc-popover-in 0.15s ease-out;
+}
+
+@keyframes gc-popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.gc-popover-header {
+  padding: 12px 16px 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.gc-popover-header button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #5f6368;
+  font-size: 18px;
+  transition: background 0.1s;
+}
+
+.gc-popover-header button:hover {
+  background: #f1f3f4;
+}
+
+.gc-popover-body {
+  padding: 0 16px 16px;
+}
+
+.gc-popover-title {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: #3c4043;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gc-popover-title .gc-color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gc-popover-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 0.875rem;
+  color: #3c4043;
+}
+
+.gc-popover-row .gc-row-icon {
+  color: #5f6368;
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.gc-popover-row .gc-row-content {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.gc-popover-row .gc-row-label {
+  color: #70757a;
+  font-size: 0.75rem;
+}
+
+/* Sync Status Badges */
+.gc-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.gc-sync-badge--synced {
+  background: #e6f4ea;
+  color: #137333;
+}
+
+.gc-sync-badge--pending {
+  background: #fef7e0;
+  color: #b06000;
+}
+
+.gc-sync-badge--failed {
+  background: #fce8e6;
+  color: #c5221f;
+}
+
+/* ---------- Event Custom Content ---------- */
+.gc-event-content {
+  padding: 2px 6px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.gc-event-time {
+  font-size: 0.625rem;
+  font-weight: 500;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+.gc-event-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gc-event-subtitle {
+  font-size: 0.625rem;
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
