@@ -6,24 +6,30 @@ import Link from 'next/link';
 export default function AdminSchedulesPage() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState('');
+  
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
-    fetch('/api/schedules')
+    setLoading(true);
+    fetch(`/api/schedules?page=${page}&limit=${limit}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch');
         return res.json();
       })
       .then(data => {
-        setSchedules(data);
+        setSchedules(data.schedules || []);
+        setTotalPages(data.totalPages || 1);
         setLoading(false);
       })
       .catch(err => {
         setError('Could not load schedules. Please refresh.');
         setLoading(false);
       });
-  }, []);
+  }, [page]);
 
   return (
     <div>
@@ -52,6 +58,8 @@ export default function AdminSchedulesPage() {
               <tr><td colSpan={7} className="text-center py-4 text-red-600">{error}</td></tr>
             ) : loading ? (
               <tr><td colSpan={7} className="text-center py-4">Loading...</td></tr>
+            ) : schedules.length === 0 ? (
+              <tr><td colSpan={7} className="text-center py-4 text-gray-500">No schedules found.</td></tr>
             ) : schedules.map((s: any) => (
               <tr key={s.id}>
                 <td className="px-6 py-4 whitespace-nowrap">{new Date(s.date).toLocaleDateString()}</td>
@@ -77,6 +85,55 @@ export default function AdminSchedulesPage() {
             ))}
           </tbody>
         </table>
+        
+        {/* Pagination Controls */}
+        {!loading && totalPages > 1 && (
+          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+            <div className="flex-1 flex justify-between sm:hidden">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className={`relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white ${page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}
+              >
+                Previous
+              </button>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+                className={`ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white ${page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}
+              >
+                Next
+              </button>
+            </div>
+            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-700">
+                  Showing page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
+                </p>
+              </div>
+              <div>
+                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}
+                  >
+                    <span className="sr-only">Previous</span>
+                    &laquo; Prev
+                  </button>
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 ${page === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}
+                  >
+                    Next &raquo;
+                    <span className="sr-only">Next</span>
+                  </button>
+                </nav>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

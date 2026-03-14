@@ -25,6 +25,7 @@ export default async function AdminLayout({
         <nav className="p-4 space-y-2 flex-1">
           <Link href="/admin" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Dashboard</Link>
           <Link href="/admin/schedules" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Schedules</Link>
+          <Link href="/admin/calendar" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Master Calendar</Link>
           <Link href="/admin/taxonomy" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Sections &amp; Topics</Link>
           <Link href="/admin/teachers" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Teachers</Link>
           <Link href="/admin/logs" className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded">Sync Logs</Link>

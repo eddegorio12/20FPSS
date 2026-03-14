@@ -35,6 +35,10 @@ export async function GET(req: Request) {
   const dateStr = searchParams.get('date');
   const teacherId = searchParams.get('teacherId');
 
+  const page = parseInt(searchParams.get('page') || '1', 10);
+  const limit = parseInt(searchParams.get('limit') || '10', 10);
+  const skip = (page - 1) * limit;
+
   const where: any = {};
   if (sectionId) where.sectionId = sectionId;
   if (topicId) where.topicId = topicId;
@@ -47,20 +51,31 @@ export async function GET(req: Request) {
       where: { userId: session.user.id },
     });
     if (!teacherProfile) {
-      return NextResponse.json([]);
+      return NextResponse.json({ schedules: [], total: 0, page, limit, totalPages: 0 });
     }
     where.teacherId = teacherProfile.id;
   } else if (teacherId) {
     where.teacherId = teacherId;
   }
 
-  const schedules = await prisma.schedule.findMany({
-    where,
-    include: schedulePopulate,
-    orderBy: [{ date: 'asc' }, { startTime: 'asc' }],
-  });
+  const [schedules, total] = await Promise.all([
+    prisma.schedule.findMany({
+      where,
+      include: schedulePopulate,
+      orderBy: [{ date: 'desc' }, { startTime: 'desc' }],
+      skip,
+      take: limit,
+    }),
+    prisma.schedule.count({ where }),
+  ]);
 
-  return NextResponse.json(schedules);
+  return NextResponse.json({
+    schedules,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  });
 }
 
 export async function POST(req: Request) {
