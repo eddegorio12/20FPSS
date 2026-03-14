@@ -18,20 +18,29 @@ export default function AdminCalendarPage() {
         const schedules = data.schedules || [];
         
         // Map backend schedules to FullCalendar event format
-        const calendarEvents = schedules.map((s: any) => ({
-          id: s.id,
-          title: `[${s.section?.name}] ${s.topic?.name} - ${s.teacher?.user?.name || 'Unknown'}`,
-          start: s.startTime,
-          end: s.endTime,
-          extendedProps: {
-            room: s.roomNumber,
-            topicPart: s.topicPart?.name,
-            syncStatus: s.syncStatus,
-          },
-          // Color code by sync status
-          backgroundColor: s.syncStatus === 'SYNCED' ? '#059669' : s.syncStatus === 'FAILED' ? '#dc2626' : '#d97706',
-          borderColor: 'transparent',
-        }));
+        const calendarEvents = schedules.map((s: any) => {
+          // The schema stores date as @db.Date and startTime/endTime as @db.Time(6)
+          // Time fields come back as 1970-01-01T{HH:MM:SS}.000Z
+          // We need to combine the date field with the time portion
+          const dateOnly = new Date(s.date).toISOString().split('T')[0]; // e.g. "2026-03-14"
+          const startTimeOnly = new Date(s.startTime).toISOString().split('T')[1]; // e.g. "08:00:00.000Z"
+          const endTimeOnly = new Date(s.endTime).toISOString().split('T')[1];
+
+          return {
+            id: s.id,
+            title: `[${s.section?.name}] ${s.topic?.name} - ${s.teacher?.user?.name || 'Unknown'}`,
+            start: `${dateOnly}T${startTimeOnly}`,
+            end: `${dateOnly}T${endTimeOnly}`,
+            extendedProps: {
+              room: s.roomNumber,
+              topicPart: s.topicPart?.name,
+              syncStatus: s.syncStatus,
+            },
+            // Color code by sync status
+            backgroundColor: s.syncStatus === 'SYNCED' ? '#059669' : s.syncStatus === 'FAILED' ? '#dc2626' : '#d97706',
+            borderColor: 'transparent',
+          };
+        });
 
         setEvents(calendarEvents);
         setLoading(false);

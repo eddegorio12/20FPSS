@@ -29,53 +29,58 @@ export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user) return new NextResponse('Unauthorized', { status: 401 });
 
-  const { searchParams } = new URL(req.url);
-  const sectionId = searchParams.get('sectionId');
-  const topicId = searchParams.get('topicId');
-  const dateStr = searchParams.get('date');
-  const teacherId = searchParams.get('teacherId');
+  try {
+    const { searchParams } = new URL(req.url);
+    const sectionId = searchParams.get('sectionId');
+    const topicId = searchParams.get('topicId');
+    const dateStr = searchParams.get('date');
+    const teacherId = searchParams.get('teacherId');
 
-  const page = parseInt(searchParams.get('page') || '1', 10);
-  const limit = parseInt(searchParams.get('limit') || '10', 10);
-  const skip = (page - 1) * limit;
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '10', 10);
+    const skip = (page - 1) * limit;
 
-  const where: any = {};
-  if (sectionId) where.sectionId = sectionId;
-  if (topicId) where.topicId = topicId;
-  if (dateStr) where.date = new Date(dateStr);
-  
-  // If user is a teacher, restrict view to their own schedules
-  // @ts-ignore
-  if (session.user.role === 'TEACHER') {
-    const teacherProfile = await prisma.teacherProfile.findUnique({
-      where: { userId: session.user.id },
-    });
-    if (!teacherProfile) {
-      return NextResponse.json({ schedules: [], total: 0, page, limit, totalPages: 0 });
+    const where: any = {};
+    if (sectionId) where.sectionId = sectionId;
+    if (topicId) where.topicId = topicId;
+    if (dateStr) where.date = new Date(dateStr);
+    
+    // If user is a teacher, restrict view to their own schedules
+    // @ts-ignore
+    if (session.user.role === 'TEACHER') {
+      const teacherProfile = await prisma.teacherProfile.findUnique({
+        where: { userId: session.user.id },
+      });
+      if (!teacherProfile) {
+        return NextResponse.json({ schedules: [], total: 0, page, limit, totalPages: 0 });
+      }
+      where.teacherId = teacherProfile.id;
+    } else if (teacherId) {
+      where.teacherId = teacherId;
     }
-    where.teacherId = teacherProfile.id;
-  } else if (teacherId) {
-    where.teacherId = teacherId;
+
+    const [schedules, total] = await Promise.all([
+      prisma.schedule.findMany({
+        where,
+        include: schedulePopulate,
+        orderBy: [{ date: 'desc' }, { startTime: 'desc' }],
+        skip,
+        take: limit,
+      }),
+      prisma.schedule.count({ where }),
+    ]);
+
+    return NextResponse.json({
+      schedules,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (error: any) {
+    console.error("[GET_SCHEDULES_ERROR]", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
-
-  const [schedules, total] = await Promise.all([
-    prisma.schedule.findMany({
-      where,
-      include: schedulePopulate,
-      orderBy: [{ date: 'desc' }, { startTime: 'desc' }],
-      skip,
-      take: limit,
-    }),
-    prisma.schedule.count({ where }),
-  ]);
-
-  return NextResponse.json({
-    schedules,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
-  });
 }
 
 export async function POST(req: Request) {

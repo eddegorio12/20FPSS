@@ -9,18 +9,24 @@ import interactionPlugin from '@fullcalendar/interaction';
 type Schedule = any; // Adjust type as needed
 
 export default function TeacherCalendarView({ schedules }: { schedules: Schedule[] }) {
-  const events = schedules.map(s => ({
-    id: s.id,
-    title: `[${s.section?.name}] ${s.topic?.name}`,
-    start: s.startTime,
-    end: s.endTime,
-    extendedProps: {
-      room: s.roomNumber,
-      topicPart: s.topicPart?.name,
-    },
-    backgroundColor: '#4f46e5', // Indigo-600
-    borderColor: 'transparent',
-  }));
+  const events = schedules.map(s => {
+    const dateOnly = new Date(s.date).toISOString().split('T')[0];
+    const startTimeOnly = new Date(s.startTime).toISOString().split('T')[1];
+    const endTimeOnly = new Date(s.endTime).toISOString().split('T')[1];
+
+    return {
+      id: s.id,
+      title: `[${s.section?.name}] ${s.topic?.name}`,
+      start: `${dateOnly}T${startTimeOnly}`,
+      end: `${dateOnly}T${endTimeOnly}`,
+      extendedProps: {
+        room: s.roomNumber,
+        topicPart: s.topicPart?.name,
+      },
+      backgroundColor: '#4f46e5',
+      borderColor: 'transparent',
+    };
+  });
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
