@@ -143,7 +143,7 @@ export default function AdminCalendarPage() {
   };
 
   return (
-    <div className="gc-calendar" style={{ height: 'calc(100vh - 4rem)' }}>
+    <div className="gc-calendar" style={{ height: 'calc(100vh - 48px)' }}>
       {loading ? (
         <div className="gc-calendar-loading">
           <div className="gc-spinner" />
